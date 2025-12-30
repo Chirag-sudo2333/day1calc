@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-
+import matplotlib.pyplot as plt
 player_stats = {
     "Player_ID": ["P01","P02","P03","P04","P05","P06","P07","P08","P09","P10",
                   "P11","P12","P13","P14","P15","P16","P17","P18","P19","P20"],
@@ -61,6 +61,23 @@ df_new['TP_status'] = np.where(df_player['TP_pct'] > df_baseline['TP_pct'].iloc[
 df_new['FT_status'] = np.where(df_player['FT_pct'] > df_baseline['FT_pct'].iloc[0], 'Above Avg', 'Below Avg')
 df_new['AST_TOV_ratio'] = df_player['AST']/df_player['TOV']
 df_new['AST_TOV_status'] = np.where(df_new['AST_TOV_ratio'] > df_baseline['AST_TOV_ratio'].iloc[0], 'Above Avg', 'Below Avg')
+df_new['Efficiency'] = (df_new['PTS_MIN'] + df_player['REB']/df_player['Minutes'] + df_player['AST']/df_player['Minutes'] - df_player['TOV']/df_player['Minutes'])
 df_new['REB_status'] = np.where(df_player['REB'] > df_baseline['REB_per_game'].iloc[0], 'Above Avg', 'Below Avg')
-print(df_new)
+df_new.sort_values(by = 'Efficiency', inplace = True)
+top_5 = df_new.tail(5)
+print("Top 5 highest are \n", top_5)
+top_5_low = df_new.head(5)
+print("Top 5 lowest are \n", top_5_low)
 
+colors = np.where(df_new['PTS_status'] == 'Above Avg', 'Green', 'Red')
+plt.figure(figsize=(8,5))  
+plt.bar(df_new['Player_id'], df_new['PTS_MIN'], color = colors)
+plt.xlabel('ID')
+plt.ylabel('PTS_Staus')
+plt.show()
+color_fg = np.where(df_player['FG_pct'] > df_baseline['FG_pct'].iloc[0], 'Green', 'Red')
+plt.bar(df_new["Player_id"], df_player['FG_pct'], color = color_fg)
+plt.xlabel('Player ID')
+plt.ylabel('FG%')
+plt.title('Field Goal Percentage Comparison to Baseline')
+plt.show()

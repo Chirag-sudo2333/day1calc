@@ -62,12 +62,17 @@ df_new['FT_status'] = np.where(df_player['FT_pct'] > df_baseline['FT_pct'].iloc[
 df_new['AST_TOV_ratio'] = df_player['AST']/df_player['TOV']
 df_new['AST_TOV_status'] = np.where(df_new['AST_TOV_ratio'] > df_baseline['AST_TOV_ratio'].iloc[0], 'Above Avg', 'Below Avg')
 df_new['Efficiency'] = (df_new['PTS_MIN'] + df_player['REB']/df_player['Minutes'] + df_player['AST']/df_player['Minutes'] - df_player['TOV']/df_player['Minutes'])
+z = np.nanmean(df_new['Efficiency'])
+df_new['Efficiency_Status'] = np.where((df_new['Efficiency']) >= z, 'Above Avg', 'Below Avg') 
 df_new['REB_status'] = np.where(df_player['REB'] > df_baseline['REB_per_game'].iloc[0], 'Above Avg', 'Below Avg')
 df_new.sort_values(by = 'Efficiency', inplace = True)
 top_5 = df_new.tail(5)
 print("Top 5 highest are \n", top_5)
 top_5_low = df_new.head(5)
 print("Top 5 lowest are \n", top_5_low)
+m = np.nanmean(df_new['PTS_MIN'])
+print(m)
+
 
 colors = np.where(df_new['PTS_status'] == 'Above Avg', 'Green', 'Red')
 plt.figure(figsize=(8,5))  
